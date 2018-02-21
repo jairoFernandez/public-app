@@ -1,0 +1,19 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+  <h1>{{title}}</h1>
+  <p>Sincronización</p>
+
+  {% for cliente in clientes %}
+    <hr>
+    <h1>{{cliente.nombreCliente}} {% if cliente.productivo == true %} <span class="label label-success">Success</span> {% endif %} </h1>
+    <p>{{cliente.RutaCliente}}</p>
+    <p>Cadena conexión: {{cliente.CadenaConexion}}</p>
+
+  {% endfor %}
+
+  <h1>Directorio base</h1>
+  {% for directory in directories %}
+    {{directory}}<br/>
+  {% endfor %}
+{% endblock %}
