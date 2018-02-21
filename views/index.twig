@@ -2,17 +2,24 @@
 
 {% block body %}
   <h1>{{title}}</h1>
-  <p>Sincronización</p>
 
-  {% for cliente in clientes %}
+  <h2>Proyectos</h2>
+  <button class="btn btn-success" type="button"><i class="fa fa-plus"></i> Agregar</button>
+  {% for project in projects %}
+    <li>{{ project.dataValues.title }}</li>
+    <span>{{ project.dataValues.description }}</span>
+  {% endfor %}
+
+  {# {% for cliente in clientes %}
     <hr>
     <h1>{{cliente.nombreCliente}} {% if cliente.productivo == true %} <span class="label label-success">Success</span> {% endif %} </h1>
     <p>{{cliente.RutaCliente}}</p>
     <p>Cadena conexión: {{cliente.CadenaConexion}}</p>
 
-  {% endfor %}
+  {% endfor %} #}
 
-  <h1>Directorio base</h1>
+  <hr>
+  <h3>Directorio base de código</h3>
   {% for directory in directories %}
     {{directory}}<br/>
   {% endfor %}
