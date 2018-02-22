@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
+var Sequelize  = require("sequelize");
 
 router.post('/create', function (req, res, next) {
     var body = req.body;
@@ -33,6 +34,7 @@ router.get('/detail/:id?', function (req, res, next) {
 
 router.post('/implementation-create', function(req, res, next){
     var body = req.body;
+    console.log("Crear implementation", body);
     models.Implementation.create(body).then((implementation)=>{
         res.redirect('/projects/detail/' + implementation.dataValues.idProject);
     });
@@ -50,7 +52,10 @@ router.get('/implementation/:id?', function (req, res, next) {
             models.StepsImplementation.findAll({
                 where:{
                     implementationId: implementation.dataValues.id
-                }
+                },
+                order: [
+                    Sequelize.col('orderStep')
+                ]
             }).then((steps)=>{                
                 var total = steps.length;
                 var completed = 0;
@@ -82,9 +87,28 @@ router.get('/implementation/:id?', function (req, res, next) {
 
 router.post('/implementation/step-create', function (req, res, next) {
     var body = req.body;
+    console.log("Creacion de paso", body);
     models.StepsImplementation.create(body).then((step) => {
         res.redirect('/projects/implementation/' + step.dataValues.implementationId);
     });
 })
+
+router.post('/implementation/step-update', function(req, res, next){
+   var body = req.body;
+   
+   if(body.status == 'on'){
+       body.status = 'true';
+   }else{
+       body.status = 'false';
+   }
+   
+   console.log("-- Implementation step --", body);
+   var implementationStepId = body.id;
+   models.StepsImplementation.update(body,{ where: { id: implementationStepId }}).then((step)=>{
+       
+   });
+   
+   res.redirect('/projects/implementation/' + body.implementationId);
+});
 
 module.exports = router;

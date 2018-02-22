@@ -5,14 +5,15 @@
     <h1>Implementación: {{implementation.dataValues.nameClient}}</h1>
     <a href="/projects/detail/{{project.dataValues.id}}"> 
        Proyecto: <span>{{project.dataValues.title}}</span></a><br>
+       <br>
        {% embed 'components/modal.twig' %}
        {% block textButton %}
            <i class="fa fa-plus"></i>
            Agregar paso{% endblock %}
+           
        {% block modalTitle %}Agregar paso a implementación de {{implementation.dataValues.nameClient}}{% endblock %}
        {% block modalBody %}
            <form method="POST" action="/projects/implementation/step-create">
-               
                <select name="type" class="form-control" required>
                     <option value="">--Seleccione tipo de tarea--</option>
                     <option value="REUNION">Reunión</option>
@@ -38,8 +39,12 @@
                
                <input class="form-control" type="text" name="responsable" required placeholder="Nombre del responsable"/><br/>
                <label>Duración en horas:</label><br/>
-               <input class="form-control" type="number" name="duration" required min="1" step="1" value="1"/>
-               <input class="form-control" type="hidden" name="status" required value="0"/>
+               <input class="form-control" type="number" name="duration" required min="1" step="1" value="1"/><br/>
+               
+               <label>Orden:</label><br/>
+               <input class="form-control" type="number" name="orderStep" required min="0" step="1" value="0"/><br/>
+               
+               <input class="form-control" type="checkbox" name="status" value="true"/>
                <input class="form-control" type="hidden" name="implementationId" required value="{{ implementation.dataValues.id }}"/><br/>
                <button type="submit" class="btn btn-primary">Guardar</button>
            </form>
@@ -60,15 +65,14 @@
 
                         <div class="event {% if loop.index is odd %}l{% else %}r{% endif %}-event col-md-6 col-sm-6 col-xs-8 ">
                             {% if step.dataValues.status == true %}
-                                <span class="thumb fa fa-check-circle" style="color: green; cursor: pointer;" onclick="changeStateStep(false)"></span>
+                                <span class="thumb fa fa-check-circle" style="color: green; cursor: pointer;"></span>
                             {% else %}
-                                <span class="thumb fa fa-exclamation-circle" style="color: red; cursor: pointer;" onclick="changeStateStep(true)"></span>
+                                <span class="thumb fa fa-exclamation-circle" style="color: red; cursor: pointer;"></span>
                             {% endif %}
                             <div class=" event-body">
                                 <div class="person-image pull-left "><img src="https://cdn1.iconfinder.com/data/icons/user-pictures/100/male3-512.png" alt="person"/></div>
                                 <div class="event-content">
-                                    <h5 class="text-primary text-left">{{step.dataValues.title}}
-                                    </h5>
+                                    <h4 class="text-primary text-left">{{step.dataValues.title}}</h4>
                                     <span class="text-muted text-left" style="display:block; margin: 0">
                                         <small>{{step.dataValues.date}}
                                             -
@@ -76,12 +80,16 @@
                                             horas</small>
                                     </span>
                                     <br><br>
-                                    <blockquote class="text-muted text-left">{{step.dataValues.description}}
+                                    <blockquote class="text-muted text-left" style="font-size: 12.5px !important">{{step.dataValues.description}}
                                         <hr>
                                         <cite class="text-muted text-right text-bold">Responsable:
-                                            {{step.dataValues.responsable}}</cite>
+                                            {{step.dataValues.responsable}} <br/>{{step.dataValues.typeResponsable}}</cite><br/>
+                                            <span>Orden: {{step.dataValues.orderStep}}</span>
+                                        <div style="float: right;">
+                                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#implementation-{{step.dataValues.id}}"> <i class="fa fa-edit"></i> </button>
+                                        </div>
                                     </blockquote>
-
+                                    
                                 </div>
                             </div>
                             <!-- end of event body -->
@@ -98,7 +106,54 @@
             </div>
         </div>
     </section>
+    
+    {% for step in steps %}
+        {% set idModal %}implementation-{{step.dataValues.id}}{% endset %}
+        {% set ModalTitle %}Editar paso "{{step.dataValues.title}}"{% endset %}
+        {% set ModalTextButton %}<i class="fa fa-edit"></i>{% endset %}
+        {% set ModalBody %}
+            <form method="POST" action="/projects/implementation/step-update">
+                <select name="type" class="form-control" required>
+                    <option value="">--Seleccione tipo de tarea--</option>
+                    <option value="REUNION" {% if step.dataValues.type == 'REUNION' %}selected="selected"{% endif %}>Reunión</option>
+                    <option value="DESARROLLO" {% if step.dataValues.type == 'DESARROLLO' %}selected="selected"{% endif %}>Desarrollo</option>
+                    <option value="LEVANTAMIENTO_INFO" {% if step.dataValues.type == 'LEVANTAMIENTO_INFO' %}selected="selected"{% endif %}>Levantamiento de requerimientos</option>
+                    <option value="OTROS" {% if step.dataValues.type == 'OTROS' %}selected="selected"{% endif %}>Otros</option>
+               </select>
+               <br>
+               <input class="form-control" type="text" name="title" required placeholder="Título..." value="{{step.dataValues.title}}"/><br>
+               <label>Fecha compromiso</label><br/>
+               <input class="form-control" type="date" name="date" value="{{step.dataValues.date|date("Y-m-d")}}"/><br/>
 
+               <textarea class="form-control" name="description" required rows="5" placeholder="Digite la descripción básica de la tarea">{{step.dataValues.description}}</textarea><br/>
+               
+               <select name="typeResponsable" class="form-control" required>
+                    <option value="">--Seleccione tipo de Responsable--</option>
+                    <option value="CLIENTE" {% if step.dataValues.typeResponsable == 'CLIENTE' %}selected="selected"{% endif %}>CLIENTE</option>
+                    <option value="COMPAÑIA" {% if step.dataValues.typeResponsable == 'COMPAÑIA' %}selected="selected"{% endif %}>COMPAÑIA</option>
+                    <option value="TERCERO" {% if step.dataValues.typeResponsable == 'TERCERO' %}selected="selected"{% endif %}>TERCERO</option>
+                    <option value="EQUIPO_DESARROLLO" {% if step.dataValues.typeResponsable == 'EQUIPO_DESARROLLO' %}selected="selected"{% endif %}>EQUIPO DESARROLLO   </option>
+                    <option value="OTROS" {% if step.dataValues.typeResponsable == 'OTROS' %}selected="selected"{% endif %}>Otro</option>
+               </select>
+               
+               <input class="form-control" type="text" name="responsable" required placeholder="Nombre del responsable" value="{{step.dataValues.responsable}}"/><br/>
+               <label>Duración en horas:</label><br/>
+               <input class="form-control" type="number" name="duration" required min="1" step="1" value="{{step.dataValues.duration}}"/><br/>
+               
+               <label>Orden:</label><br/>
+               <input class="form-control" type="number" name="orderStep" required min="0" step="1" value="{{step.dataValues.orderStep}}"/><br/>
+               
+               <input class="form-control" type="checkbox" name="status" {% if step.dataValues.status == true %}checked{% endif %}/>
+               <input class="form-control" type="hidden" name="implementationId" required value="{{ implementation.dataValues.id }}"/><br/>
+               <input class="form-control" type="hidden" name="id" required value="{{ step.dataValues.id }}"/><br/>
+               
+               <button type="submit" class="btn btn-primary">Guardar</button>
+            </form>
+        {% endset %}
+        
+        {% set values = {'idModal': idModal, 'ModalTitle': ModalTitle, 'ModalTextButton': ModalTextButton, 'ModalBody': ModalBody, 'ButtonHidden': true } %}
+        {% include 'components/modal.twig' with values %}
+    {% endfor %}
     <script>
 
         function changeStateStep(state) {

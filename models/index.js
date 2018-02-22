@@ -42,7 +42,26 @@ var StepsImplementation = connection.define('steps_implementation',{
     responsable: Sequelize.STRING,
     duration: Sequelize.INTEGER,
     status: Sequelize.BOOLEAN,
-    implementationId: Sequelize.INTEGER
+    implementationId: Sequelize.INTEGER,
+    orderStep: Sequelize.INTEGER
+});
+
+var Template = connection.define('template', {
+    name: Sequelize.STRING,
+    description: Sequelize.STRING
+});
+
+var TemplateTask = connection.define('template-task', {
+    type: Sequelize.STRING,
+    title: Sequelize.STRING,
+    date: Sequelize.DATE,
+    description: Sequelize.STRING,
+    typeResponsable:Sequelize.STRING,
+    responsable: Sequelize.STRING,
+    duration: Sequelize.INTEGER,
+    status: Sequelize.BOOLEAN,
+    orderStep: Sequelize.INTEGER,
+    templateId: Sequelize.INTEGER
 });
 
 connection.sync({
