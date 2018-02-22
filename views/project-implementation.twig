@@ -31,7 +31,7 @@
                <select name="typeResponsable" class="form-control" required>
                     <option value="">--Seleccione tipo de Responsable--</option>
                     <option value="CLIENTE">CLIENTE</option>
-                    <option value="COMPAÑIA">COMPAÑIA</option>
+                    <option value="EMPRESA">EMPRESA</option>
                     <option value="TERCERO">TERCERO</option>
                     <option value="TERCERO">EQUIPO DESARROLLO   </option>
                     <option value="OTROS">Otro</option>
@@ -130,7 +130,7 @@
                <select name="typeResponsable" class="form-control" required>
                     <option value="">--Seleccione tipo de Responsable--</option>
                     <option value="CLIENTE" {% if step.dataValues.typeResponsable == 'CLIENTE' %}selected="selected"{% endif %}>CLIENTE</option>
-                    <option value="COMPAÑIA" {% if step.dataValues.typeResponsable == 'COMPAÑIA' %}selected="selected"{% endif %}>COMPAÑIA</option>
+                    <option value="EMPRESA" {% if step.dataValues.typeResponsable == 'EMPRESA' %}selected="selected"{% endif %}>EMPRESA</option>
                     <option value="TERCERO" {% if step.dataValues.typeResponsable == 'TERCERO' %}selected="selected"{% endif %}>TERCERO</option>
                     <option value="EQUIPO_DESARROLLO" {% if step.dataValues.typeResponsable == 'EQUIPO_DESARROLLO' %}selected="selected"{% endif %}>EQUIPO DESARROLLO   </option>
                     <option value="OTROS" {% if step.dataValues.typeResponsable == 'OTROS' %}selected="selected"{% endif %}>Otro</option>

@@ -83,6 +83,8 @@ module.exports = {
     Project,
     Implementation,
     Clients,
-    StepsImplementation
+    StepsImplementation,
+    Template,
+    TemplateTask
 }
 
