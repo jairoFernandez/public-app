@@ -1,10 +1,26 @@
 {% extends 'layout.twig' %}
 
 {% block body %}
-<div class="jumbotron">
-  <h1>{{project.dataValues.title}}</h1>
-  <p>{{project.dataValues.description}}</p>
-  <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
-  
-</div>
+    <div class="jumbotron">
+        <h1>{{project.dataValues.title}}</h1>
+        <p>{{project.dataValues.description}}</p>
+        {% embed 'components/modal.twig' %}
+            {% block textButton %}
+                <i class="fa fa-plus"></i>
+                Agregar implementación{% endblock %}
+            {% block modalTitle %}Agregar implementación{% endblock %}
+            {% block modalBody %}
+                <form method="POST" action="/projects/implementation-create">
+                    <input class="form-control" type="hidden" name="idProject" value="{{project.dataValues.id}}"/><br>
+                    <input class="form-control" type="text" name="nameClient" required placeholder="Nombre del cliente..."/><br>
+                    <input class="form-control" type="hidden" name="percentage" value="0"/><br>
+                    <input class="form-control" type="date" name="dateImplementation" required/><br>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>
+            {% endblock %}
+        {% endembed %}
+    </div>
+
+    {% include 'components/progress.twig' with implementations %}
+
 {% endblock %}

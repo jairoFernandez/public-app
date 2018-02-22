@@ -1,62 +1,50 @@
 {% extends 'layout.twig' %}
 
 {% block body %}
-  <h1>{{title}}</h1>
+    <h1>{{title}}</h1>
 
-  <h2>Proyectos</h2>
-  <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-  <i class="fa fa-plus"></i> Agregar proyecto
-</button>
+    <h2>Proyectos</h2>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Agregar proyecto</h4>
-      </div>
-      <div class="modal-body">
-        <form method="POST" action="/projects/create">
-          <input class="form-control" type="text" name="title" placeholder="Título del proyecto..." /><br>
-          <input class="form-control" type="text" name="description" placeholder="Descripción del proyecto..." /><br>
-          <button type="submit" class="btn btn-primary">Guardar</button>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
-  <hr>
-  {% for project in projects %}
-  <div class="col-md-6">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">{{ project.dataValues.title }}</h3>
-    </div>
-    <div class="panel-body">
-      {{ project.dataValues.description }} <a href="/projects/detail/{{project.dataValues.id }}">Ver</a>
-    </div>
-  </div>
-  </div>
-  {% endfor %}
-  <br />
+    {% embed 'components/modal.twig' %}
+        {% block textButton %}<i class="fa fa-plus"></i> Agregar proyecto{% endblock %}
+        {% block modalTitle %}Agregar proyecto{% endblock %}
+        {% block modalBody %}
+            <form method="POST" action="/projects/create">
+                <input class="form-control" type="text" name="title" placeholder="Título del proyecto..."/><br>
+                <input class="form-control" type="text" name="description" placeholder="Descripción del proyecto..."/><br>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </form>
+        {% endblock %}
+    {% endembed  %}
+    
+    <hr>
+    {% for project in projects %}
+        <div class="col-md-3">
+            <div class="panel panel-default" style="height: 300px;">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ project.dataValues.title }}</h3>
+                </div>
+                <div class="panel-body">
+                    {{ project.dataValues.description }}
+                    <a href="/projects/detail/{{project.dataValues.id }}">Ver</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <br/>
 
-  {# {% for cliente in clientes %}
+    {# {% for cliente in clientes %}
     <hr>
     <h1>{{cliente.nombreCliente}} {% if cliente.productivo == true %} <span class="label label-success">Success</span> {% endif %} </h1>
     <p>{{cliente.RutaCliente}}</p>
     <p>Cadena conexión: {{cliente.CadenaConexion}}</p>
 
   {% endfor %} #}
-  
-  <div class="col-md-12">
-    <h3>Directorio base de código</h3>
-    {% for directory in directories %}
-      {{directory}}<br/>
-    {% endfor %}
-  </div>
+
+    <div class="col-md-12">
+        <h3>Directorio base de código</h3>
+        {% for directory in directories %}
+            {{directory}}<br/>
+        {% endfor %}
+    </div>
 {% endblock %}

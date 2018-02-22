@@ -20,6 +20,31 @@ var Project = connection.define('project', {
     freezeTableName: false
 });
 
+var Implementation = connection.define('implementation', {
+    idProject: Sequelize.INTEGER,
+    nameClient: {
+        type: Sequelize.TEXT
+    },
+    dateImplementation: {
+        type: Sequelize.DATE
+    },
+    percentage: {
+        type: Sequelize.TINYINT
+    }
+});
+
+var StepsImplementation = connection.define('steps_implementation',{
+    type: Sequelize.STRING,
+    title: Sequelize.STRING,
+    date: Sequelize.DATE,
+    description: Sequelize.STRING,
+    typeResponsable:Sequelize.STRING,
+    responsable: Sequelize.STRING,
+    duration: Sequelize.INTEGER,
+    status: Sequelize.BOOLEAN,
+    implementationId: Sequelize.INTEGER
+});
+
 connection.sync({
     force: false,
     logging: console.log
@@ -36,6 +61,9 @@ connection.sync({
 })
 
 module.exports = {
-    Project
+    Project,
+    Implementation,
+    Clients,
+    StepsImplementation
 }
 

@@ -1,0 +1,132 @@
+{% extends 'layout.twig' %}
+
+{% block body %}
+
+    <h1>Implementación: {{implementation.dataValues.nameClient}}</h1>
+    <a href="/projects/detail/{{project.dataValues.id}}"> 
+       Proyecto: <span>{{project.dataValues.title}}</span></a><br>
+       {% embed 'components/modal.twig' %}
+       {% block textButton %}
+           <i class="fa fa-plus"></i>
+           Agregar paso{% endblock %}
+       {% block modalTitle %}Agregar paso a implementación de {{implementation.dataValues.nameClient}}{% endblock %}
+       {% block modalBody %}
+           <form method="POST" action="/projects/implementation/step-create">
+               
+               <select name="type" class="form-control" required>
+                    <option value="">--Seleccione tipo de tarea--</option>
+                    <option value="REUNION">Reunión</option>
+                    <option value="DESARROLLO">Desarrollo</option>
+                    <option value="LEVANTAMIENTO_INFO">Levantamiento de requerimientos</option>
+                    <option value="OTROS">Otros</option>
+               </select>
+               <br>
+               <input class="form-control" type="text" name="title" required placeholder="Título..."/><br>
+               <label>Fecha compromiso</label><br/>
+               <input class="form-control" type="date" name="date"/><br/>
+
+               <textarea class="form-control" name="description" required rows="5" placeholder="Digite la descripción básica de la tarea"></textarea><br/>
+               
+               <select name="typeResponsable" class="form-control" required>
+                    <option value="">--Seleccione tipo de Responsable--</option>
+                    <option value="CLIENTE">CLIENTE</option>
+                    <option value="COMPAÑIA">COMPAÑIA</option>
+                    <option value="TERCERO">TERCERO</option>
+                    <option value="TERCERO">EQUIPO DESARROLLO   </option>
+                    <option value="OTROS">Otro</option>
+               </select>
+               
+               <input class="form-control" type="text" name="responsable" required placeholder="Nombre del responsable"/><br/>
+               <label>Duración en horas:</label><br/>
+               <input class="form-control" type="number" name="duration" required min="1" step="1" value="1"/>
+               <input class="form-control" type="hidden" name="status" required value="0"/>
+               <input class="form-control" type="hidden" name="implementationId" required value="{{ implementation.dataValues.id }}"/><br/>
+               <button type="submit" class="btn btn-primary">Guardar</button>
+           </form>
+       {% endblock %}
+   {% endembed %}
+    <hr>
+
+    <section id="timeline-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="timeline-top">
+                    <div class="top-year">{{"now"|date("Y")}}</span></div>
+            </div>
+            <div class="timeline-block">
+                <div class="timeline-events">
+                    <br>
+                    {% for step in steps %}
+
+                        <div class="event {% if loop.index is odd %}l{% else %}r{% endif %}-event col-md-6 col-sm-6 col-xs-8 ">
+                            {% if step.dataValues.status == true %}
+                                <span class="thumb fa fa-check-circle" style="color: green; cursor: pointer;" onclick="changeStateStep(false)"></span>
+                            {% else %}
+                                <span class="thumb fa fa-exclamation-circle" style="color: red; cursor: pointer;" onclick="changeStateStep(true)"></span>
+                            {% endif %}
+                            <div class=" event-body">
+                                <div class="person-image pull-left "><img src="https://cdn1.iconfinder.com/data/icons/user-pictures/100/male3-512.png" alt="person"/></div>
+                                <div class="event-content">
+                                    <h5 class="text-primary text-left">{{step.dataValues.title}}
+                                    </h5>
+                                    <span class="text-muted text-left" style="display:block; margin: 0">
+                                        <small>{{step.dataValues.date}}
+                                            -
+                                            {{step.dataValues.duration}}
+                                            horas</small>
+                                    </span>
+                                    <br><br>
+                                    <blockquote class="text-muted text-left">{{step.dataValues.description}}
+                                        <hr>
+                                        <cite class="text-muted text-right text-bold">Responsable:
+                                            {{step.dataValues.responsable}}</cite>
+                                    </blockquote>
+
+                                </div>
+                            </div>
+                            <!-- end of event body -->
+                            <div class="clear-fix"></div>
+                        </div>
+                        <!-- end of left event -->
+                        <div class="row"></div>
+                    {% endfor %}
+                    <div class="clearfix"></div>
+
+                </div>
+                <!-- end of timeline events -->
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+
+        function changeStateStep(state) {
+            if(confirm("¿Está seguro de cambiar el estado?")){
+                alert('Confirmado')
+            }
+        }
+
+        $(function () {
+
+            var watchScroll = 0;
+            var rightComments = $('.r-event .event-body');
+            var leftComments = $('.l-event .event-body');
+            TweenMax.staggerFrom(rightComments, 1, {
+                x: 100,
+                ease: Bounce.easeOut
+            }, 1);
+            TweenMax.staggerFrom(leftComments, 1, {
+                x: -100,
+                ease: Bounce.easeOut
+            }, 1);
+
+            $(window).on('scroll', function () {
+                var scrollTop = $(window).scrollTop();
+                (scrollTop > watchScroll) ? $('footer').addClass('footer-up') : $('footer').removeClass('footer-up');
+
+                watchScroll = scrollTop;
+            })
+        })
+    </script>
+{% endblock %}

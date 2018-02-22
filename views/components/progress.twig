@@ -1,0 +1,40 @@
+{% for implementation in implementations %}
+
+{% set percentage %}{{implementation.dataValues.percentage * 100}}{% endset %}
+{% set idImplementation %}{{ implementation.dataValues.id }}{% endset %}
+
+{% if percentage > 30 and percentage <= 50 %}
+    {% set class = 'warning' %}
+{% elseif percentage > 50 and percentage < 70  %}
+    {% set class = 'primary' %}
+{% elseif percentage >=70  %}
+    {% set class = 'success' %}
+{% elseif percentage <= 30 %}
+    {% set class = 'danger' %}
+{% endif %}
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped active progress-bar-{{ class }}" 
+                role="progressbar" aria-valuenow="{{ percentage }}" 
+                aria-valuemin="0"  id="scale-{{ idImplementation }}" aria-valuemax="100">
+                <span class="sr-only">{{ percentage }}% Complete</span>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        Implementación: {{implementation.dataValues.nameClient}} -- {{implementation.dataValues.dateImplementation|date("d M/Y")}}
+        <a href="/projects/implementation/{{idImplementation}}" class="btn btn-info" style="float: right;"><i class="fa fa-search"></i> Detalle</a>
+        <hr/>
+    </div>
+</div>
+
+<script>
+    var idImplementation = "{{idImplementation}}";
+    var scale = "{{percentage}}%";
+    var bg = document.getElementById("scale-"+idImplementation);
+    bg.style.width = scale;
+</script>
+
+{% endfor %}
