@@ -4,11 +4,46 @@
   <h1>{{title}}</h1>
 
   <h2>Proyectos</h2>
-  <button class="btn btn-success" type="button"><i class="fa fa-plus"></i> Agregar</button>
+  <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+  <i class="fa fa-plus"></i> Agregar proyecto
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Agregar proyecto</h4>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/projects/create">
+          <input class="form-control" type="text" name="title" placeholder="Título del proyecto..." /><br>
+          <input class="form-control" type="text" name="description" placeholder="Descripción del proyecto..." /><br>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+  <hr>
   {% for project in projects %}
-    <li>{{ project.dataValues.title }}</li>
-    <span>{{ project.dataValues.description }}</span>
+  <div class="col-md-6">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{ project.dataValues.title }}</h3>
+    </div>
+    <div class="panel-body">
+      {{ project.dataValues.description }} <a href="/projects/detail/{{project.dataValues.id }}">Ver</a>
+    </div>
+  </div>
+  </div>
   {% endfor %}
+  <br />
 
   {# {% for cliente in clientes %}
     <hr>
@@ -17,10 +52,11 @@
     <p>Cadena conexión: {{cliente.CadenaConexion}}</p>
 
   {% endfor %} #}
-
-  <hr>
-  <h3>Directorio base de código</h3>
-  {% for directory in directories %}
-    {{directory}}<br/>
-  {% endfor %}
+  
+  <div class="col-md-12">
+    <h3>Directorio base de código</h3>
+    {% for directory in directories %}
+      {{directory}}<br/>
+    {% endfor %}
+  </div>
 {% endblock %}

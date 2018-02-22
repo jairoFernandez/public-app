@@ -5,7 +5,7 @@ var models = require('../models');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {  
-  var prueba = "C:\\Users\\jairo\\Proyectos\\Instalaciones";
+  var prueba = "/";
   var directory = [];
   
   models.Project.findAll({
