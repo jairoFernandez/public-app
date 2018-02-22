@@ -7,49 +7,71 @@
        Proyecto: <span>{{project.dataValues.title}}</span></a><br>
        <br>
        {% embed 'components/modal.twig' %}
-       {% block textButton %}
-           <i class="fa fa-plus"></i>
-           Agregar paso{% endblock %}
-           
-       {% block modalTitle %}Agregar paso a implementación de {{implementation.dataValues.nameClient}}{% endblock %}
-       {% block modalBody %}
-           <form method="POST" action="/projects/implementation/step-create">
-               <select name="type" class="form-control" required>
-                    <option value="">--Seleccione tipo de tarea--</option>
-                    <option value="REUNION">Reunión</option>
-                    <option value="DESARROLLO">Desarrollo</option>
-                    <option value="LEVANTAMIENTO_INFO">Levantamiento de requerimientos</option>
-                    <option value="OTROS">Otros</option>
-               </select>
-               <br>
-               <input class="form-control" type="text" name="title" required placeholder="Título..."/><br>
-               <label>Fecha compromiso</label><br/>
-               <input class="form-control" type="date" name="date"/><br/>
-
-               <textarea class="form-control" name="description" required rows="5" placeholder="Digite la descripción básica de la tarea"></textarea><br/>
-               
-               <select name="typeResponsable" class="form-control" required>
-                    <option value="">--Seleccione tipo de Responsable--</option>
-                    <option value="CLIENTE">CLIENTE</option>
-                    <option value="EMPRESA">EMPRESA</option>
-                    <option value="TERCERO">TERCERO</option>
-                    <option value="TERCERO">EQUIPO DESARROLLO   </option>
-                    <option value="OTROS">Otro</option>
-               </select>
-               
-               <input class="form-control" type="text" name="responsable" required placeholder="Nombre del responsable"/><br/>
-               <label>Duración en horas:</label><br/>
-               <input class="form-control" type="number" name="duration" required min="1" step="1" value="1"/><br/>
-               
-               <label>Orden:</label><br/>
-               <input class="form-control" type="number" name="orderStep" required min="0" step="1" value="0"/><br/>
-               
-               <input class="form-control" type="checkbox" name="status" value="true"/>
-               <input class="form-control" type="hidden" name="implementationId" required value="{{ implementation.dataValues.id }}"/><br/>
-               <button type="submit" class="btn btn-primary">Guardar</button>
-           </form>
-       {% endblock %}
-   {% endembed %}
+           {% block textButton %}
+               <i class="fa fa-plus"></i>
+               Agregar paso
+           {% endblock %}
+           {% block modalTitle %}Agregar paso a implementación de {{implementation.dataValues.nameClient}}{% endblock %}
+           {% block modalBody %}
+               <form method="POST" action="/projects/implementation/step-create">
+                   <select name="type" class="form-control" required>
+                        <option value="">--Seleccione tipo de tarea--</option>
+                        <option value="REUNION">Reunión</option>
+                        <option value="DESARROLLO">Desarrollo</option>
+                        <option value="LEVANTAMIENTO_INFO">Levantamiento de requerimientos</option>
+                        <option value="OTROS">Otros</option>
+                   </select>
+                   <br>
+                   <input class="form-control" type="text" name="title" required placeholder="Título..."/><br>
+                   <label>Fecha compromiso</label><br/>
+                   <input class="form-control" type="date" name="date"/><br/>
+    
+                   <textarea class="form-control" name="description" required rows="5" placeholder="Digite la descripción básica de la tarea"></textarea><br/>
+                   
+                   <select name="typeResponsable" class="form-control" required>
+                        <option value="">--Seleccione tipo de Responsable--</option>
+                        <option value="CLIENTE">CLIENTE</option>
+                        <option value="EMPRESA">EMPRESA</option>
+                        <option value="TERCERO">TERCERO</option>
+                        <option value="TERCERO">EQUIPO DESARROLLO   </option>
+                        <option value="OTROS">Otro</option>
+                   </select>
+                   
+                   <input class="form-control" type="text" name="responsable" required placeholder="Nombre del responsable"/><br/>
+                   <label>Duración en horas:</label><br/>
+                   <input class="form-control" type="number" name="duration" required min="1" step="1" value="1"/><br/>
+                   
+                   <label>Orden:</label><br/>
+                   <input class="form-control" type="number" name="orderStep" required min="0" step="1" value="0"/><br/>
+                   
+                   <input class="form-control" type="checkbox" name="status" value="true"/>
+                   <input class="form-control" type="hidden" name="implementationId" required value="{{ implementation.dataValues.id }}"/><br/>
+                   <button type="submit" class="btn btn-primary">Guardar</button>
+               </form>
+           {% endblock %}
+       {% endembed %}
+       
+       {% set values = { 'idModal': 'importar-pasos' } %}
+       {% embed 'components/modal.twig' with values %}
+           {% block textButton %}
+               <i class="fa fa-plus"></i>
+               Importar pasos
+           {% endblock %}
+           {% block modalTitle %}Importar pasos a implementación de {{implementation.dataValues.nameClient}}{% endblock %}
+           {% block modalBody %}
+               <form method="POST" action="/projects/implementation/import-steps">
+                    <select name="templates" class="form-control" required>
+                        <option value="">--Seleccione una plantilla--</option>
+                        {% for template in templates %}
+                            <option value="{{template.id}}">{{template.name}}</option>
+                        {% endfor %}
+                   </select>
+                   <input type="hidden" name="idImplementation" value="{{implementation.dataValues.id }}" />
+                   <br/>
+                   <button type="submit" class="btn btn-success">Guardar</button>
+               </form>
+           {% endblock %}
+       {% endembed %}
     <hr>
 
     <section id="timeline-wrapper">

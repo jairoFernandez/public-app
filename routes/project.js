@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
-var Sequelize  = require("sequelize");
+var Sequelize = require("sequelize");
 
-router.post('/create', function (req, res, next) {
+router.post('/create', function(req, res, next) {
     var body = req.body;
     models.Project.create(body).then((project) => {
         console.log(project)
@@ -11,7 +11,7 @@ router.post('/create', function (req, res, next) {
     });
 })
 
-router.get('/detail/:id?', function (req, res, next) {
+router.get('/detail/:id?', function(req, res, next) {
     var projectInfo = {};
     var implementation = [];
 
@@ -32,60 +32,62 @@ router.get('/detail/:id?', function (req, res, next) {
     });
 });
 
-router.post('/implementation-create', function(req, res, next){
+router.post('/implementation-create', function(req, res, next) {
     var body = req.body;
     console.log("Crear implementation", body);
-    models.Implementation.create(body).then((implementation)=>{
+    models.Implementation.create(body).then((implementation) => {
         res.redirect('/projects/detail/' + implementation.dataValues.idProject);
     });
 });
 
-router.get('/implementation/:id?', function (req, res, next) {
+router.get('/implementation/:id?', function(req, res, next) {
     var idImplementation = req.params.id;
     var implementation = {};
     var project = {};
-   
-    models.Implementation.findById(idImplementation).then((imp)=>{
+
+    models.Implementation.findById(idImplementation).then((imp) => {
         var implementation = imp;
-        models.Project.findById(imp.dataValues.idProject).then((project)=>{
+        models.Project.findById(imp.dataValues.idProject).then((project) => {
             project = project;
             models.StepsImplementation.findAll({
-                where:{
+                where: {
                     implementationId: implementation.dataValues.id
                 },
                 order: [
                     Sequelize.col('orderStep')
                 ]
-            }).then((steps)=>{                
+            }).then((steps) => {
                 var total = steps.length;
                 var completed = 0;
 
-                steps.forEach((value, index)=>{
-                    if(value.dataValues.status){
+                steps.forEach((value, index) => {
+                    if (value.dataValues.status) {
                         completed = completed + 1;
                     }
                 });
 
-                if(total == 0){
+                if (total == 0) {
                     total = 1;
                 }
 
                 var percentage = completed / total;
                 models.Implementation.update({
                     percentage: percentage
-                },{
+                }, {
                     where: {
                         id: idImplementation
                     }
                 });
 
-                res.render('project-implementation',{ implementation: implementation, project: project, steps: steps });
+                models.Template.findAll().then((rows) => {
+                    res.render('project-implementation', { implementation: implementation, project: project, steps: steps, templates: rows });
+                });
             })
         });
     });
 });
 
-router.post('/implementation/step-create', function (req, res, next) {
+router.post('/implementation/step-create', function(req, res, next) {
     var body = req.body;
     console.log("Creacion de paso", body);
     models.StepsImplementation.create(body).then((step) => {
@@ -93,22 +95,42 @@ router.post('/implementation/step-create', function (req, res, next) {
     });
 })
 
-router.post('/implementation/step-update', function(req, res, next){
-   var body = req.body;
-   
-   if(body.status == 'on'){
-       body.status = 'true';
-   }else{
-       body.status = 'false';
-   }
-   
-   console.log("-- Implementation step --", body);
-   var implementationStepId = body.id;
-   models.StepsImplementation.update(body,{ where: { id: implementationStepId }}).then((step)=>{
-       
-   });
-   
-   res.redirect('/projects/implementation/' + body.implementationId);
+router.post('/implementation/step-update', function(req, res, next) {
+    var body = req.body;
+
+    if (body.status == 'on') {
+        body.status = 'true';
+    }
+    else {
+        body.status = 'false';
+    }
+
+    console.log("-- Implementation step --", body);
+    var implementationStepId = body.id;
+    models.StepsImplementation.update(body, { where: { id: implementationStepId } }).then((step) => {
+
+    });
+
+    res.redirect('/projects/implementation/' + body.implementationId);
+});
+
+
+router.post('/implementation/import-steps', function(req, res, next) {
+    var body = req.body;
+    console.log("Steps import", body);
+    
+    models.TemplateTask.findAll({
+        where: {
+            templateId: body.templates
+        }
+    }).then((template)=>{
+        var steps = [];
+        template.forEach((value)=>{
+            
+        });        
+    });
+    
+    res.redirect('/projects/implementation/' + body.idImplementation);
 });
 
 module.exports = router;
