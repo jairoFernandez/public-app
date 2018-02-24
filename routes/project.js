@@ -117,20 +117,31 @@ router.post('/implementation/step-update', function(req, res, next) {
 
 router.post('/implementation/import-steps', function(req, res, next) {
     var body = req.body;
-    console.log("Steps import", body);
-    
+
     models.TemplateTask.findAll({
         where: {
             templateId: body.templates
         }
-    }).then((template)=>{
-        var steps = [];
-        template.forEach((value)=>{
+    }).then((template) => {
+        template.forEach((value) => {
+            var steps = {
+                type: value.dataValues.type,
+                title: value.dataValues.title,
+                date: value.dataValues.date,
+                description: value.dataValues.description,
+                typeResponsable: value.dataValues.typeResponsable,
+                responsable: value.dataValues.responsable,
+                duration: value.dataValues.duration,
+                status: value.dataValues.status,
+                implementationId: body.idImplementation,
+                orderStep: value.dataValues.orderStep
+            };
             
-        });        
+            models.StepsImplementation.create(steps);
+                    
+            res.redirect('/projects/implementation/' + body.idImplementation);
+        });
     });
-    
-    res.redirect('/projects/implementation/' + body.idImplementation);
 });
 
 module.exports = router;
