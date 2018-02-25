@@ -1,3 +1,4 @@
+var cool = require('cool-ascii-faces');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -34,6 +35,11 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/projects', projects);
 app.use('/templates', templates);
+
+app.get('/cool', function(request, response) {
+  response.send(cool());
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
