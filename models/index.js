@@ -1,9 +1,11 @@
 const path = require('path');
 const Sequelize = require('sequelize');
 
+const database_name = process.env.DATABASE_NAME || 'database.sqlite'
+
 const connection = new Sequelize('database', 'username', 'password', {
     dialect: 'sqlite',
-    storage: './database.sqlite'
+    storage: './' + database_name
 });
 
 var Clients = connection.define('clients')
@@ -71,7 +73,7 @@ connection.sync({
     Project.count().then((count)=>{
         if(count === 0){
             Project.create({
-                title: "Facturación electrónica",
+                title: "EJEMPLO",
                 description: "Proyecto de integración"
             })
         }
