@@ -3,90 +3,42 @@ const Sequelize = require('sequelize');
 
 const database_name = process.env.DATABASE_NAME || 'database.sqlite'
 
-const connection = new Sequelize('database', 'username', 'password', {
+const sequelize = new Sequelize('database', 'username', 'password', {
     dialect: 'sqlite',
     storage: './' + database_name
 });
 
-var Clients = connection.define('clients')
+var Project = sequelize.import('./project');
 
-var Project = connection.define('project', {
-    title: Sequelize.STRING,
-    description: {
-        type: Sequelize.TEXT,
-        defaultValue: 'My own description by default'
-    }
-},
-{
-    timestamps: false,
-    freezeTableName: false
-});
+var Implementation = sequelize.import('./implementation.js');
 
-var Implementation = connection.define('implementation', {
-    idProject: Sequelize.INTEGER,
-    nameClient: {
-        type: Sequelize.TEXT
-    },
-    dateImplementation: {
-        type: Sequelize.DATE
-    },
-    percentage: {
-        type: Sequelize.TINYINT
-    }
-});
+var StepsImplementation = sequelize.import('./steps_implementation.js')
 
-var StepsImplementation = connection.define('steps_implementation',{
-    type: Sequelize.STRING,
-    title: Sequelize.STRING,
-    date: Sequelize.DATE,
-    description: Sequelize.STRING,
-    typeResponsable:Sequelize.STRING,
-    responsable: Sequelize.STRING,
-    duration: Sequelize.INTEGER,
-    status: Sequelize.BOOLEAN,
-    implementationId: Sequelize.INTEGER,
-    orderStep: Sequelize.INTEGER
-});
+var Template = sequelize.import('./template');
 
-var Template = connection.define('template', {
-    name: Sequelize.STRING,
-    description: Sequelize.STRING
-});
+var TemplateTask = sequelize.import('./template-task.js');
 
-var TemplateTask = connection.define('template-task', {
-    type: Sequelize.STRING,
-    title: Sequelize.STRING,
-    date: Sequelize.DATE,
-    description: Sequelize.STRING,
-    typeResponsable:Sequelize.STRING,
-    responsable: Sequelize.STRING,
-    duration: Sequelize.INTEGER,
-    status: Sequelize.BOOLEAN,
-    orderStep: Sequelize.INTEGER,
-    templateId: Sequelize.INTEGER
-});
+//TemplateTask.belongsTo(Template, { foreignKey: 'templateId', targetKey: 'id'});
 
-connection.sync({
-    force: false,
+sequelize.sync({
+    force: true,
     logging: console.log
 }).then(()=>{
-    Project.count().then((count)=>{
-        if(count === 0){
-            Project.create({
-                title: "EJEMPLO",
-                description: "Proyecto de integración"
-            })
-        }
-    })
+    // Project.count().then((count)=>{
+    //     if(count === 0){
+    //         Project.create({
+    //             title: "EJEMPLO",
+    //             description: "Proyecto de integración"
+    //         })
+    //     }
+    // })
     console.log("Inicializamos la base de datos");
 })
 
 module.exports = {
     Project,
     Implementation,
-    Clients,
     StepsImplementation,
     Template,
     TemplateTask
 }
-

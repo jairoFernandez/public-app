@@ -17,7 +17,10 @@
                       <a href="/templates/{{template.id}}" class="list-group-item {% if templateActive == template.id %}active{% endif %}">
                         <h4 class="list-group-item-heading">{{template.name}}</h4>
                         <p class="list-group-item-text">
-                            {{template.description}}
+                            {{template.description}} 
+                            {% for task in template.template-tasks %}
+                                <h1>HOla</h1>{{task.description}}
+                            {% endfor %}
                         </p>
                       </a>
                 {% endfor %}
@@ -26,7 +29,9 @@
         <div class="col-md-6">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h3 class="panel-title">Tareas</h3> <button type="button" style="float: right;" class="btn btn-success" data-toggle="modal" data-target="#template-{{templateActive}}"> <i class="fa fa-plus"></i> </button>
+                <h3 class="panel-title">Tareas</h3>  
+                    <button type="button" data-toggle="modal" data-target="#templateId-{{templateActive}}" style="float: right;" class="btn btn-warning"><i class="fa fa-edit"></i></button>
+                    <button type="button" data-toggle="modal" data-target="#template-{{templateActive}}" style="float: right;" class="btn btn-success"> <i class="fa fa-plus"></i> </button>
               </div>
               <div class="panel-body">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -141,6 +146,23 @@
             {% include 'components/modal.twig' with values %}
         {% endfor %}
         <!-- Fin edición -->
+
+        <!-- Edit template -->
+        {% set idModal %}templateId-{{templateActive}}{% endset %}
+        {% set values = { 'idModal': idModal, 'ButtonHidden': true } %}
+        {% embed 'components/modal.twig' with values  %}
+            {% block textButton %}
+                <i class="fa fa-plus"></i>
+                Editar plantilla{% endblock %}
+            {% block modalTitle %}Editar plantilla{% endblock %}
+            {% block modalBody %}
+                    <form method="POST" action="/templates/update">
+                        <input type="text" name="name" class="form-control" placeholder="Nombre de la plantilla" /><br>
+                        <input type="text" name="description" class="form-control" placeholder="Descripción de la plantilla" /><br>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Agregar plantilla</button>
+                    </form>
+            {% endblock %}
+        {% endembed %}
     </div>
    
 {% endblock %}

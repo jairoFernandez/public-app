@@ -138,9 +138,8 @@ router.post('/implementation/import-steps', function(req, res, next) {
             };
             
             models.StepsImplementation.create(steps);
-                    
-            res.redirect('/projects/implementation/' + body.idImplementation);
         });
+        res.redirect('/projects/implementation/' + body.idImplementation);
     });
 });
 
