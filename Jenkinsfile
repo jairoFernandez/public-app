@@ -2,8 +2,17 @@ pipeline {
   agent any
   stages {
     stage('Begin') {
-      steps {
-        sh 'Write-Output "Hello desde jetkins"'
+      parallel {
+        stage('Begin') {
+          steps {
+            sh 'echo "Hello desde jetkins"'
+          }
+        }
+        stage('browser') {
+          steps {
+            echo 'Hola mundo'
+          }
+        }
       }
     }
   }
