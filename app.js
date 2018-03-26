@@ -30,6 +30,9 @@ app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redi
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 app.use('/css', express.static(__dirname + '/node_modules/font-awesome/css'));
 app.use('/fonts', express.static(__dirname + '/node_modules/font-awesome/fonts'));
+app.use('/js', express.static(__dirname + '/node_modules/frappe-gantt/dist'));
+app.use('/js', express.static(__dirname + '/node_modules/moment/min'));
+app.use('/js', express.static(__dirname + '/node_modules/snapsvg/dist'));
 
 app.use('/', index);
 app.use('/users', users);

@@ -92,7 +92,17 @@
                                 <span class="thumb fa fa-exclamation-circle" style="color: red; cursor: pointer;"></span>
                             {% endif %}
                             <div class=" event-body">
-                                <div class="person-image pull-left "><img src="https://cdn1.iconfinder.com/data/icons/user-pictures/100/male3-512.png" alt="person"/></div>
+                                <div class="person-image pull-left ">
+                                    {% if step.dataValues.type == "REUNION" %}
+                                        <i class="fa fa-comment fa-5x"></i>
+                                    {% elseif step.dataValues.type == "DESARROLLO" %}
+                                        <i class="fa fa-cogs fa-5x"></i>
+                                    {% elseif step.dataValues.type == "LEVANTAMIENTO_INFO" %}
+                                        <i class="fa fa-info-circle fa-5x"></i>
+                                    {% else %}
+                                        <i class="fa fa-question fa-5x"></i>
+                                    {% endif %}
+                                </div>
                                 <div class="event-content">
                                     <h4 class="text-primary text-left">{{step.dataValues.title}}</h4>
                                     <span class="text-muted text-left" style="display:block; margin: 0">

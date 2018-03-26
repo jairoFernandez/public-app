@@ -4,17 +4,16 @@ var fs = require('fs');
 var models = require('../models');
 
 /* GET home page. */
-router.get('/', function (req, res, next) {  
+router.get('/', async (req, res, next) => {
   var prueba = "/";
   var directory = [];
-  
-  models.Project.findAll({
-    attributes: ['id','title', 'description']
-  }).then((rows)=>{
-    directory = fs.readdirSync(prueba, null);
-    res.render('index', { title: 'Actualizador', projects: rows, directories: directory });  
+
+  var rows = await models.Project.findAll({
+    attributes: ['id', 'title', 'description']
   });
- 
+
+  directory = fs.readdirSync(prueba, null);
+  res.render('index', { title: 'Actualizador', projects: rows, directories: directory });
 });
 
 module.exports = router; 

@@ -1,168 +1,211 @@
-{% extends 'layout.twig' %}
+{% extends 'layout.twig' %} {% block body %}
+<h1>{{title}}</h1>
+<svg id="gantt"></svg>
 
-{% block body %}
-    <h1>{{title}}</h1>
-    
-    <form method="POST" action="/templates/create">
-        <input type="text" name="name" class="form-control" placeholder="Nombre de la plantilla" /><br>
-        <input type="text" name="description" class="form-control" placeholder="Descripción de la plantilla" /><br>
-        <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Agregar plantilla</button>
-    </form>
+<form method="POST" action="/templates/create">
+    <input type="text" name="name" class="form-control" placeholder="Nombre de la plantilla" />
     <br>
-    <hr>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="list-group">
-                {% for template in templates %}
-                      <a href="/templates/{{template.id}}" class="list-group-item {% if templateActive == template.id %}active{% endif %}">
-                        <h4 class="list-group-item-heading">{{template.name}}</h4>
-                        <p class="list-group-item-text">
-                            {{template.description}} 
-                            {% for task in template.template-tasks %}
-                                <h1>HOla</h1>{{task.description}}
-                            {% endfor %}
-                        </p>
-                      </a>
-                {% endfor %}
-            </div>
+    <input type="text" name="description" class="form-control" placeholder="Descripción de la plantilla" />
+    <br>
+    <button type="submit" class="btn btn-primary">
+        <i class="fa fa-plus"></i> Agregar plantilla</button>
+</form>
+<br>
+<hr>
+<div class="row">
+    <div class="col-md-6">
+        <div class="list-group">
+            {% for template in templates %}
+            <a href="/templates/{{template.id}}" class="list-group-item {% if templateActive == template.id %}active{% endif %}">
+                <h4 class="list-group-item-heading">{{template.name}}</h4>
+                <p class="list-group-item-text">
+                    {{template.description}} {% for task in template.template-tasks %}
+                    <h1>...</h1>{{task.description}} {% endfor %}
+                </p>
+            </a>
+            {% endfor %}
         </div>
-        <div class="col-md-6">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h3 class="panel-title">Tareas</h3>  
-                    <button type="button" data-toggle="modal" data-target="#templateId-{{templateActive}}" style="float: right;" class="btn btn-warning"><i class="fa fa-edit"></i></button>
-                    <button type="button" data-toggle="modal" data-target="#template-{{templateActive}}" style="float: right;" class="btn btn-success"> <i class="fa fa-plus"></i> </button>
-              </div>
-              <div class="panel-body">
+    </div>
+    {% if templateActive > 0 %}
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Tareas</h3>
+                <button type="button" data-toggle="modal" data-target="#templateId-{{templateActive}}" style="float: right;" class="btn btn-warning">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button type="button" data-toggle="modal" data-target="#template-{{templateActive}}" style="float: right;" class="btn btn-success">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+            <div class="panel-body">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     {% for templateTask in templatesTask %}
-                      <div class="panel panel-default">
+                    <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
-                          <h4 class="panel-title">
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{templateTask.dataValues.id}}" aria-expanded="false" aria-controls="collapse-{{templateTask.dataValues.id}}">
-                              {{templateTask.title}}
-                            </a>
-                          </h4>
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{templateTask.dataValues.id}}" aria-expanded="false"
+                                    aria-controls="collapse-{{templateTask.dataValues.id}}">
+                                    {{templateTask.title}}
+                                </a>
+                            </h4>
                         </div>
                         <div id="collapse-{{templateTask.dataValues.id}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                          <div class="panel-body">
-                            Descripción: {{templateTask.dataValues.description}}
-                            <br>
-                            Tipo de tarea: {{templateTask.dataValues.type}}<br>
-                            Tipo de responsable: {{templateTask.dataValues.typeResponsable}}<br>
-                            Duración: {{templateTask.dataValues.duration}}<br>
-                            Orden: {{templateTask.dataValues.orderStep}}<br>
-                            <hr>
-                            <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edicion-task-{{templateTask.dataValues.id}}"> <i class="fa fa-edit"></i> </button>
-                          </div>
+                            <div class="panel-body">
+                                Descripción: {{templateTask.dataValues.description}}
+                                <br> Tipo de tarea: {{templateTask.dataValues.type}}
+                                <br> Tipo de responsable: {{templateTask.dataValues.typeResponsable}}
+                                <br> Duración: {{templateTask.dataValues.duration}}
+                                <br> Orden: {{templateTask.dataValues.orderStep}}
+                                <br>
+                                <hr>
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edicion-task-{{templateTask.dataValues.id}}">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </div>
                         </div>
-                      </div>
-                    {% endfor %}  
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
-        </div> 
-        
-        {% set idModal %}template-{{templateActive}}{% endset %}
-        {% set values = { 'idModal': idModal, 'ButtonHidden': true } %}
-        {% embed 'components/modal.twig' with values  %}
-            {% block textButton %}
-                <i class="fa fa-plus"></i>
-                Agregar tarea{% endblock %}
-            {% block modalTitle %}Agregar tarea{% endblock %}
-            {% block modalBody %}
-                <form method="POST" action="/templates/create-task">
-                    <select name="type" class="form-control" required>
-                    <option value="">--Seleccione tipo de tarea--</option>
-                        <option value="REUNION">Reunión</option>
-                        <option value="DESARROLLO">Desarrollo</option>
-                        <option value="LEVANTAMIENTO_INFO">Levantamiento de requerimientos</option>
-                        <option value="OTROS">Otros</option>
-                   </select>
-                   <br>
-                    <input class="form-control" type="text" name="title" placeholder="Título de la tarea"/><br>
-                    <textarea name="description" class="form-control"></textarea><br>
-                    
-                     <select name="typeResponsable" class="form-control" required>
-                        <option value="">--Seleccione tipo de Responsable--</option>
-                        <option value="CLIENTE">CLIENTE</option>
-                        <option value="EMPRESA">EMPRESA</option>
-                        <option value="TERCERO">TERCERO</option>
-                        <option value="TERCERO">EQUIPO DESARROLLO   </option>
-                        <option value="OTROS">Otro</option>
-                   </select><br/>
-               
-                    <label>Duración aproximada:</label>
-                    <input class="form-control" type="number" name="duration" min="1" step="1"/><br>
-                    
-                    <label>Orden:</label>
-                    <input class="form-control" type="number" name="orderStep" min="0" step="1"/><br>
-                    <input type="hidden" name="templateId" value="{{templateActive}}" />     
-                    
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </form>
-            {% endblock %}
-        {% endembed %}
-        
+        </div>
+        {% endif %} {% set idModal %}template-{{templateActive}}{% endset %} {% set values = { 'idModal': idModal, 'ButtonHidden':
+        true } %} {% embed 'components/modal.twig' with values %} {% block textButton %}
+        <i class="fa fa-plus"></i>
+        Agregar tarea{% endblock %} {% block modalTitle %}Agregar tarea{% endblock %} {% block modalBody %}
+        <form method="POST" action="/templates/create-task">
+            <select name="type" class="form-control" required>
+                <option value="">--Seleccione tipo de tarea--</option>
+                <option value="REUNION">Reunión</option>
+                <option value="DESARROLLO">Desarrollo</option>
+                <option value="LEVANTAMIENTO_INFO">Levantamiento de requerimientos</option>
+                <option value="OTROS">Otros</option>
+            </select>
+            <br>
+            <input class="form-control" type="text" name="title" placeholder="Título de la tarea" />
+            <br>
+            <textarea name="description" class="form-control"></textarea>
+            <br>
+
+            <select name="typeResponsable" class="form-control" required>
+                <option value="">--Seleccione tipo de Responsable--</option>
+                <option value="CLIENTE">CLIENTE</option>
+                <option value="EMPRESA">EMPRESA</option>
+                <option value="TERCERO">TERCERO</option>
+                <option value="TERCERO">EQUIPO DESARROLLO </option>
+                <option value="OTROS">Otro</option>
+            </select>
+            <br/>
+
+            <label>Duración aproximada:</label>
+            <input class="form-control" type="number" name="duration" min="1" step="1" />
+            <br>
+
+            <label>Orden:</label>
+            <input class="form-control" type="number" name="orderStep" min="0" step="1" />
+            <br>
+            <input type="hidden" name="templateId" value="{{templateActive}}" />
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        {% endblock %} {% endembed %}
+
         <!-- Edición task template -->
-        {% for templateTask in templatesTask %}
-            {% set idModal %}edicion-task-{{templateTask.dataValues.id}}{% endset %}
-            {% set ModalTitle %}Editar paso "{{templateTask.dataValues.title}}"{% endset %}
-            {% set ModalTextButton %}<i class="fa fa-edit"></i>{% endset %}
-            {% set ModalBody %}
-                 <form method="POST" action="/templates/update-task">
-                    <select name="type" class="form-control" required>
-                        <option value="">--Seleccione tipo de tarea--</option>
-                        <option value="REUNION" {% if templateTask.dataValues.type == 'REUNION' %}selected="selected"{% endif %}>Reunión</option>
-                        <option value="DESARROLLO" {% if templateTask.dataValues.type == 'DESARROLLO' %}selected="selected"{% endif %}>Desarrollo</option>
-                        <option value="LEVANTAMIENTO_INFO" {% if templateTask.dataValues.type == 'LEVANTAMIENTO_INFO' %}selected="selected"{% endif %}>Levantamiento de requerimientos</option>
-                        <option value="OTROS" {% if templateTask.dataValues.type == 'OTROS' %}selected="selected"{% endif %}>Otros</option>
-                   </select>
-                   <br>
-                    <input class="form-control" type="text" name="title" placeholder="Título de la tarea"  value="{{templateTask.dataValues.title}}"/><br>
-                    <textarea name="description" class="form-control">{{templateTask.dataValues.description}}</textarea><br>
-                    
-                     <select name="typeResponsable" class="form-control" required>
-                        <option value="">--Seleccione tipo de Responsable--</option>
-                    <option value="CLIENTE" {% if templateTask.dataValues.typeResponsable == 'CLIENTE' %}selected="selected"{% endif %}>CLIENTE</option>
-                    <option value="EMPRESA" {% if templateTask.dataValues.typeResponsable == 'EMPRESA' %}selected="selected"{% endif %}>EMPRESA</option>
-                    <option value="TERCERO" {% if templateTask.dataValues.typeResponsable == 'TERCERO' %}selected="selected"{% endif %}>TERCERO</option>
-                    <option value="EQUIPO_DESARROLLO" {% if templateTask.dataValues.typeResponsable == 'EQUIPO_DESARROLLO' %}selected="selected"{% endif %}>EQUIPO DESARROLLO   </option>
-                    <option value="OTROS" {% if templateTask.dataValues.typeResponsable == 'OTROS' %}selected="selected"{% endif %}>Otro</option>
-                   </select><br/>
-               
-                    <label>Duración aproximada:</label>
-                    <input class="form-control" type="number" name="duration" min="1" step="1" value="{{templateTask.dataValues.duration}}"/><br>
-                    
-                    <label>Orden:</label>
-                    <input class="form-control" type="number" name="orderStep" min="0" step="1" value="{{templateTask.dataValues.orderStep}}"/><br>
-                    <input type="hidden" name="templateId" value="{{templateActive}}" />   
-                    <input type="hidden" name="id" value="{{templateTask.dataValues.id}}" />  
-                    
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </form>
-            {% endset %}
-        
-            {% set values = {'idModal': idModal, 'ModalTitle': ModalTitle, 'ModalTextButton': ModalTextButton, 'ModalBody': ModalBody, 'ButtonHidden': true } %}
-            {% include 'components/modal.twig' with values %}
-        {% endfor %}
+        {% for templateTask in templatesTask %} {% set idModal %}edicion-task-{{templateTask.dataValues.id}}{% endset %} {% set ModalTitle
+        %}Editar paso "{{templateTask.dataValues.title}}"{% endset %} {% set ModalTextButton %}
+        <i class="fa fa-edit"></i>{% endset %} {% set ModalBody %}
+        <form method="POST" action="/templates/update-task">
+            <select name="type" class="form-control" required>
+                <option value="">--Seleccione tipo de tarea--</option>
+                <option value="REUNION" {% if templateTask.dataValues.type=='REUNION' %}selected="selected" {% endif %}>Reunión</option>
+                <option value="DESARROLLO" {% if templateTask.dataValues.type=='DESARROLLO' %}selected="selected" {% endif %}>Desarrollo</option>
+                <option value="LEVANTAMIENTO_INFO" {% if templateTask.dataValues.type=='LEVANTAMIENTO_INFO' %}selected="selected" {% endif
+                    %}>Levantamiento de requerimientos</option>
+                <option value="OTROS" {% if templateTask.dataValues.type=='OTROS' %}selected="selected" {% endif %}>Otros</option>
+            </select>
+            <br>
+            <input class="form-control" type="text" name="title" placeholder="Título de la tarea" value="{{templateTask.dataValues.title}}"
+            />
+            <br>
+            <textarea name="description" class="form-control">{{templateTask.dataValues.description}}</textarea>
+            <br>
+
+            <select name="typeResponsable" class="form-control" required>
+                <option value="">--Seleccione tipo de Responsable--</option>
+                <option value="CLIENTE" {% if templateTask.dataValues.typeResponsable=='CLIENTE' %}selected="selected" {% endif %}>CLIENTE</option>
+                <option value="EMPRESA" {% if templateTask.dataValues.typeResponsable=='EMPRESA' %}selected="selected" {% endif %}>EMPRESA</option>
+                <option value="TERCERO" {% if templateTask.dataValues.typeResponsable=='TERCERO' %}selected="selected" {% endif %}>TERCERO</option>
+                <option value="EQUIPO_DESARROLLO" {% if templateTask.dataValues.typeResponsable=='EQUIPO_DESARROLLO' %}selected="selected"
+                    {% endif %}>EQUIPO DESARROLLO </option>
+                <option value="OTROS" {% if templateTask.dataValues.typeResponsable=='OTROS' %}selected="selected" {% endif %}>Otro</option>
+            </select>
+            <br/>
+
+            <label>Duración aproximada:</label>
+            <input class="form-control" type="number" name="duration" min="1" step="1" value="{{templateTask.dataValues.duration}}" />
+            <br>
+
+            <label>Orden:</label>
+            <input class="form-control" type="number" name="orderStep" min="0" step="1" value="{{templateTask.dataValues.orderStep}}"
+            />
+            <br>
+            <input type="hidden" name="templateId" value="{{templateActive}}" />
+            <input type="hidden" name="id" value="{{templateTask.dataValues.id}}" />
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        {% endset %} {% set values = {'idModal': idModal, 'ModalTitle': ModalTitle, 'ModalTextButton': ModalTextButton, 'ModalBody':
+        ModalBody, 'ButtonHidden': true } %} {% include 'components/modal.twig' with values %} {% endfor %}
         <!-- Fin edición -->
 
         <!-- Edit template -->
-        {% set idModal %}templateId-{{templateActive}}{% endset %}
-        {% set values = { 'idModal': idModal, 'ButtonHidden': true } %}
-        {% embed 'components/modal.twig' with values  %}
-            {% block textButton %}
-                <i class="fa fa-plus"></i>
-                Editar plantilla{% endblock %}
-            {% block modalTitle %}Editar plantilla{% endblock %}
-            {% block modalBody %}
-                    <form method="POST" action="/templates/update">
-                        <input type="text" name="name" class="form-control" placeholder="Nombre de la plantilla" /><br>
-                        <input type="text" name="description" class="form-control" placeholder="Descripción de la plantilla" /><br>
-                        <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Agregar plantilla</button>
-                    </form>
-            {% endblock %}
-        {% endembed %}
+        {% set idModal %}templateId-{{templateActive}}{% endset %} {% set values = { 'idModal': idModal, 'ButtonHidden': true } %}
+        {% embed 'components/modal.twig' with values %} {% block textButton %}
+        <i class="fa fa-plus"></i>
+        Editar plantilla{% endblock %} {% block modalTitle %}Editar plantilla{% endblock %} {% block modalBody %}
+        <form method="POST" action="/templates/update">
+            <input type="text" name="name" class="form-control" placeholder="Nombre de la plantilla" />
+            <br>
+            <input type="text" name="description" class="form-control" placeholder="Descripción de la plantilla" />
+            <br>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-plus"></i> Agregar plantilla</button>
+        </form>
+        {% endblock %} {% endembed %}
     </div>
-   
-{% endblock %}
+
+    {% endblock %} {% block javascripts %} {{parent()}}
+    <script>
+        var tasks = [
+            {
+                id: 'Task 1',
+                name: 'Redesign website',
+                start: '2016-12-28',
+                end: '2016-12-31',
+                progress: 20,
+                dependencies: 'Task 2, Task 3'
+            },
+            {
+                id: 'Task 2',
+                name: 'Redesign website',
+                start: '2016-12-28',
+                end: '2016-12-31',
+                progress: 20,
+                dependencies: 'Task 2, Task 3'
+            }
+        ]
+        var gantt = new Gantt("#gantt", tasks, {
+            on_click: function (task) {
+                console.log(task);
+            },
+            on_date_change: function (task, start, end) {
+                console.log(task, start, end);
+            },
+            on_progress_change: function (task, progress) {
+                console.log(task, progress);
+            },
+            on_view_change: function (mode) {
+                console.log(mode);
+            }
+        });
+    </script> {% endblock %}

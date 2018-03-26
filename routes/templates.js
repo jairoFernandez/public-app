@@ -4,68 +4,56 @@ var models = require('../models');
 const Sequelize = require("sequelize");
 
 /* GET users listing. */
-router.get('/:id?', function (req, res, next) {
-    models.Template.findAll({
-      
-    }).then((templates) => {
-
-        /*console.log("All templates", templates);
-        res.render('templates/index-template',
-                 { title: 'Plantillas', templates: templates, templateActive: req.params.id }
-        );*/
-
-        models.TemplateTask.findAll({
+router.get('/:id?', async (req, res, next) => {
+    var id = req.params.id != undefined ? req.params.id : 0;
+    var templates = await models.Template.findAll({});
+    var templateTask = {};
+    
+    if(id > 0){
+        templateTask = await models.TemplateTask.findAll({
             where: {
-                templateId: req.params.id
+                templateId: id
             },
             order: [
                 Sequelize.col('orderStep')
             ]
-        }).then((templatesTask) => {
-            res.render('templates/index-template',
-                { title: 'Plantillas', templates: templates, templateActive: req.params.id, templatesTask: templatesTask }
-            );
         })
-    })
+    }    
 
+    res.render('templates/index-template',
+        { title: 'Plantillas', templates: templates, templateActive: id, templatesTask: templateTask }
+    );
 });
 
-router.post('/create', function (req, res, next) {
+router.post('/create', async (req, res, next) => {
     var body = req.body;
-
-    models.Template.create(body).then((row) => {
-        res.redirect('/templates/' + row.dataValues.id);
-    });
+    var row = await models.Template.create(body);
+    res.redirect('/templates/' + row.dataValues.id);
 });
 
-router.post('/update', function (req, res, next) {
+router.post('/update', async (req, res, next) => {
     var body = req.body;
-
-    models.Template.update(body, {
+    var row = await models.Template.update(body, {
         where: {
             id: body.id
         }
-    }).then((row) => {
-        res.redirect('/templates/' + body.id);
     });
+    res.redirect('/templates/' + body.id);
 });
 
-router.post('/create-task', function (req, res, next) {
+router.post('/create-task', async (req, res, next) => {
     var body = req.body;
-
-    models.TemplateTask.create(body).then((row) => {
-        res.redirect('/templates/' + row.dataValues.templateId);
-    });
+    var row = await models.TemplateTask.create(body);
+    res.redirect('/templates/' + row.dataValues.templateId);
 });
 
-router.post('/update-task', function (req, res, next) {
+router.post('/update-task', async (req, res, next) => {
     var body = req.body;
-    console.log("Update task", body);
-    models.TemplateTask.update(body, { where: { id: body.id } }).then((row) => {
-
-    });
+    let templetaUpdate = await models.TemplateTask.update(body,
+        {
+            where: { id: body.id }
+        });
     res.redirect('/templates/' + body.templateId);
 });
-
 
 module.exports = router;
