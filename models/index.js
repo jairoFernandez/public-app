@@ -21,7 +21,7 @@ var TemplateTask = sequelize.import('./template-task.js');
 //TemplateTask.belongsTo(Template, { foreignKey: 'templateId', targetKey: 'id'});
 
 sequelize.sync({
-    force: true,
+    force: false,
     logging: console.log
 }).then(()=>{
     // Project.count().then((count)=>{

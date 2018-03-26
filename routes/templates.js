@@ -6,28 +6,26 @@ const Sequelize = require("sequelize");
 /* GET users listing. */
 router.get('/:id?', function (req, res, next) {
     models.Template.findAll({
-        include: [{
-            model: models.TemplateTask
-        }]
+      
     }).then((templates) => {
 
-        console.log("All templates", templates);
+        /*console.log("All templates", templates);
         res.render('templates/index-template',
                  { title: 'Plantillas', templates: templates, templateActive: req.params.id }
-        );
+        );*/
 
-        // models.TemplateTask.findAll({
-        //     where: {
-        //         templateId: req.params.id
-        //     },
-        //     order: [
-        //         Sequelize.col('orderStep')
-        //     ]
-        // }).then((templatesTask) => {
-        //     res.render('templates/index-template',
-        //         { title: 'Plantillas', templates: templates, templateActive: req.params.id, templatesTask: templatesTask }
-        //     );
-        // })
+        models.TemplateTask.findAll({
+            where: {
+                templateId: req.params.id
+            },
+            order: [
+                Sequelize.col('orderStep')
+            ]
+        }).then((templatesTask) => {
+            res.render('templates/index-template',
+                { title: 'Plantillas', templates: templates, templateActive: req.params.id, templatesTask: templatesTask }
+            );
+        })
     })
 
 });
